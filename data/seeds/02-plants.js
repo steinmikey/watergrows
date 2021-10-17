@@ -1,4 +1,4 @@
-exports.seed = function (knex) {
+exports.seed = function (knex, Promise) {
   return knex("plants").insert([
     {
       nickname: "Zuni",
@@ -9,13 +9,13 @@ exports.seed = function (knex) {
       owner: 1
     },
     {
-      nickname: "",
+      nickname: "Sunny",
       species: "Aloe",
       h2oFrequency: "About every 3 weeks",
       img_URL: "https://cdn.pixabay.com/photo/2018/01/25/04/15/cactus-3105368_1280.jpg",
       owner: 1
     },
-    { nickname: "David", species: "ZZ Plant", h2oFrequency: "Every 2-3 weeks", img_URL: null, owner: 1 },
+    { nickname: "David", species: "ZZ Plant", h2oFrequency: "Every 2-3 weeks", img_URL: "", owner: 1 },
     {
       nickname: "Fig",
       species: "Fiddle-Leaf Fig",
