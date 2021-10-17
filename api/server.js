@@ -2,7 +2,7 @@ const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
 
-// const restrict = require("./auth/auth-middleware");
+const { restrict } = require("./auth/auth-middleware");
 
 const usersRouter = require("./users/users-router");
 const plantsRouter = require("./plants/plants-router");
@@ -13,11 +13,7 @@ server.use(helmet());
 server.use(cors());
 
 server.use("/api/users", usersRouter);
-// server.use(
-//   "/api/plants",
-//   // restrict,
-//   plantsRouter
-// );
+server.use("/api/plants", restrict, plantsRouter);
 
 server.use("*", (request, response, next) => {
   next({ status: 404, message: "not found!" });

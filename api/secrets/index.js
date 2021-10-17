@@ -1,3 +1,3 @@
 module.exports = {
-  SECRET: process.env.SECRET || "guessing is futile"
+  SECRET: process.env.SECRET || "notpotsofgoldintherainbowtable"
 };
