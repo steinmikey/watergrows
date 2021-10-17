@@ -1,23 +1,24 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 
-const { getAllUsers, createUser } = require("./users-model");
 const { validateCredens, uniqueUsername } = require("./users-middleware");
+const { restrict } = require("../auth/auth-middleware");
 
 const Users = require("../users/users-model");
 const buildToken = require("../auth/token-builder");
 
+///// this route will go away
 router.get("/", async (req, res, next) => {
-  getAllUsers()
+  Users.getAllUsers()
     .then((users) => {
       res.json(users);
     })
     .catch(next);
 });
 
-router.post("/", async (req, res) => {
-  res.status(201).json(await createUser(req.body));
-});
+// router.post("/", async (req, res) => {
+//   res.status(201).json(await createUser(req.body));
+// });
 
 router.post("/register", uniqueUsername, (req, res, next) => {
   let user = req.body;
@@ -34,8 +35,23 @@ router.post("/register", uniqueUsername, (req, res, next) => {
     .catch(next);
 });
 
-router.put("/:id", (req, res, next) => {
-  // update user info
+router.put("/:username/reset_password", restrict, (req, res, next) => {
+  console.log("alright");
+  console.log(req.params.username, req.decoded.username);
+  console.log("user_id", req.decoded.subject, typeof req.decoded.subject);
+
+  if (req.params.username === req.decoded.username) {
+    const rounds = process.env.BCRYPT_ROUNDS || 8;
+    const hash = bcrypt.hashSync(req.body.password, rounds);
+    Users.updateUserPassword(req.decoded.subject, hash)
+      .then(() => {
+        console.log("mmk");
+        res.status(202).json({ message: "password updated successfully" });
+      })
+      .catch(next);
+  } else {
+    next({ status: 401, message: "unauthorized" });
+  }
 });
 
 router.post("/login", validateCredens, (req, res, next) => {
@@ -50,6 +66,10 @@ router.post("/login", validateCredens, (req, res, next) => {
   } else {
     next({ status: 401, message: `invalid credentials` });
   }
+});
+
+router.delete("/delete", restrict, (req, res, next) => {
+  res.json({ message: "hitting delete endpoint" });
 });
 
 module.exports = router;

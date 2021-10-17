@@ -16,13 +16,15 @@ async function createUser(user) {
   const [newUser] = await db("users").insert(user, ["id", "username"]);
   return newUser;
 }
-// WITH POSTGRES WE CAN PASS A "RETURNING ARRAY" AS 2ND ARGUMENT TO knex.insert/update
-// AND OBTAIN WHATEVER COLUMNS WE NEED FROM THE NEWLY CREATED/UPDATED RECORD
-// UNLIKE SQLITE WHICH FORCES US DO DO A 2ND DB CALL
+
+function updateUserPassword(user_id, hash) {
+  return db("users").where("id", user_id).update({ password: hash }, ["id", "username", "password"]);
+}
 
 module.exports = {
   getAllUsers,
   findBy,
   findById,
-  createUser
+  createUser,
+  updateUserPassword
 };
