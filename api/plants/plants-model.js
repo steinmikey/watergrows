@@ -11,8 +11,13 @@ async function addPlant(plant) {
   return newPlant;
 }
 
+function updatePlant() {}
+
+function deletePlant() {}
+
 module.exports = {
   getUsersPlants,
-  addPlant
-  //   updatePlant
+  addPlant,
+  updatePlant,
+  deletePlant
 };

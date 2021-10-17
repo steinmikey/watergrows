@@ -10,7 +10,7 @@ const restrict = (req, res, next) => {
 
   jwt.verify(token, SECRET, (err, decoded) => {
     if (err) {
-      return next({ status: 401, message: err });
+      return next({ status: 401, message: "invalid token" });
     }
     req.decoded = decoded;
     return next();

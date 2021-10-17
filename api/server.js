@@ -19,6 +19,11 @@ server.use("*", (request, response, next) => {
   next({ status: 404, message: "not found!" });
 });
 
+server.use((error, request, response, next) => {
+  console.error(error);
+  next(error);
+});
+
 // eslint-disable-next-line
 server.use((error, request, response, _next) => {
   response.status(error.status || 500).json({
