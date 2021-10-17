@@ -6,8 +6,12 @@ const { getAllUsers, createUser } = require("./users-model");
 // const Users = require("../users/users-model");
 // const buildToken = require("../auth/token-builder");
 
-router.get("/", async (req, res) => {
-  res.json(await getAllUsers());
+router.get("/", async (req, res, next) => {
+  getAllUsers()
+    .then((users) => {
+      res.json(users);
+    })
+    .catch(next);
 });
 
 router.post("/", async (req, res) => {
