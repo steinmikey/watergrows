@@ -13,7 +13,7 @@ function findById(id) {
 }
 
 async function createUser(user) {
-  const [newUser] = await db("users").insert(user, ["id", "username", "password"]);
+  const [newUser] = await db("users").insert(user, ["id", "username"]);
   return newUser;
 }
 // WITH POSTGRES WE CAN PASS A "RETURNING ARRAY" AS 2ND ARGUMENT TO knex.insert/update
