@@ -9,16 +9,16 @@ function findBy(filter) {
 }
 
 function findById(id) {
-  return db("users").select("id", "username", "password").where({ id }).first();
+  return db("users").select("id", "username", "password", "phone").where({ id }).first();
 }
 
 async function createUser(user) {
-  const [newUser] = await db("users").insert(user, ["id", "username"]);
+  const [newUser] = await db("users").insert(user, ["id", "username", "phone"]);
   return newUser;
 }
 
 function updateUserPassword(user_id, hash) {
-  return db("users").where("id", user_id).update({ password: hash }, ["id", "username", "password"]);
+  return db("users").where("id", user_id).update({ password: hash }, ["id", "username", "password", "phone"]);
 }
 
 function deleteUser(id) {
