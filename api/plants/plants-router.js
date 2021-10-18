@@ -33,12 +33,34 @@ router.get("/:id", (req, res, next) => {
     .catch(next);
 });
 
-router.put("/:id", (req, res, next) => {
-  res.json({ message: "hitting edit plant endpoint" });
+router.put("/:id", async (req, res, next) => {
+  const id = req.params.id;
+  const plant = await Plants.getPlantById(id);
+  if (!plant) {
+    next({ status: 404, message: "plant not found" });
+  } else if (plant.owner === req.decoded.subject) {
+    Plants.updatePlant(id, req.body)
+      .then((plant) => {
+        res.json(plant);
+      })
+      .catch(next);
+  } else {
+    next({ status: 401, message: "unauthorized, you cannot update another user's plant" });
+  }
 });
 
-router.delete("/:id", (req, res, next) => {
-  res.json({ message: "hitting delete plant endpoint" });
+router.delete("/:id", async (req, res, next) => {
+  const id = req.params.id;
+  const plant = await Plants.getPlantById(id);
+  if (!plant) {
+    next({ status: 404, message: "plant not found" });
+  } else if (plant.owner === req.decoded.subject) {
+    Plants.deletePlant(id)
+      .then(res.status(200).json({ message: `plant successfully deleted` }))
+      .catch(next);
+  } else {
+    next({ status: 401, message: "unauthorized, you cannot delete another user's plant" });
+  }
 });
 
 module.exports = router;

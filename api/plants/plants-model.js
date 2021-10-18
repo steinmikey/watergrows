@@ -24,9 +24,13 @@ async function addPlant(user_id, plant) {
   return newPlant;
 }
 
-function updatePlant() {}
+function updatePlant(id, changes) {
+  return db("plants").where("id", id).update(changes, ["id", "nickname", "species", "h2oFrequency", "img_URL"]);
+}
 
-function deletePlant() {}
+function deletePlant(id) {
+  return db("plants").where({ id }).del();
+}
 
 module.exports = {
   getUsersPlants,
