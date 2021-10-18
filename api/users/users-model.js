@@ -21,10 +21,15 @@ function updateUserPassword(user_id, hash) {
   return db("users").where("id", user_id).update({ password: hash }, ["id", "username", "password"]);
 }
 
+function deleteUser(id) {
+  return db("users").where("id", id).del();
+}
+
 module.exports = {
   getAllUsers,
   findBy,
   findById,
   createUser,
-  updateUserPassword
+  updateUserPassword,
+  deleteUser
 };
