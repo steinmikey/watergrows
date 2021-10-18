@@ -32,13 +32,13 @@ router.post("/register", uniqueUsername, (req, res, next) => {
     .catch(next);
 });
 
-router.put("/reset_password/:username", restrict, (req, res, next) => {
+router.put("/update-account/:username", restrict, (req, res, next) => {
   if (req.params.username === req.decoded.username) {
     const rounds = process.env.BCRYPT_ROUNDS || 8;
     const hash = bcrypt.hashSync(req.body.password, rounds);
     Users.updateUserPassword(req.decoded.subject, hash)
       .then((user) => {
-        res.status(202).json({ message: "password reset successful", user });
+        res.status(202).json({ message: "update successful", user });
       })
       .catch(next);
   } else {
@@ -60,7 +60,7 @@ router.post("/login", validateCredens, (req, res, next) => {
   }
 });
 
-router.delete("/delete/:username", restrict, (req, res, next) => {
+router.delete("/:username", restrict, (req, res, next) => {
   if (req.params.username === req.decoded.username) {
     Users.deleteUser(req.decoded.subject)
       .then(res.status(200).json({ message: `account successfully deleted` }))

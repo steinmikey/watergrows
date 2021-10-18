@@ -15,19 +15,19 @@ server.use(cors());
 server.use("/api/users", usersRouter);
 server.use("/api/plants", restrict, plantsRouter);
 
-server.use("*", (request, response, next) => {
+server.use("*", (req, res, next) => {
   next({ status: 404, message: "not found!" });
 });
 
-server.use((error, request, response, next) => {
-  console.error(error);
-  next(error);
+server.use((err, req, res, next) => {
+  console.error(err);
+  next(err);
 });
 
 // eslint-disable-next-line
-server.use((error, request, response, _next) => {
-  response.status(error.status || 500).json({
-    message: error.message || "server error"
+server.use((err, req, res, _next) => {
+  res.status(err.status || 500).json({
+    message: err.message || "server error"
   });
 });
 
