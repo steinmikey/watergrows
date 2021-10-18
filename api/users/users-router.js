@@ -7,7 +7,7 @@ const { restrict } = require("../auth/auth-middleware");
 const Users = require("../users/users-model");
 const buildToken = require("../auth/token-builder");
 
-///// this route will go away
+///// this route will go away ///////////
 router.get("/", async (req, res, next) => {
   Users.getAllUsers()
     .then((users) => {
@@ -15,10 +15,7 @@ router.get("/", async (req, res, next) => {
     })
     .catch(next);
 });
-
-// router.post("/", async (req, res) => {
-//   res.status(201).json(await createUser(req.body));
-// });
+/////////////////////////////////////////
 
 router.post("/register", uniqueUsername, (req, res, next) => {
   let user = req.body;
@@ -35,18 +32,13 @@ router.post("/register", uniqueUsername, (req, res, next) => {
     .catch(next);
 });
 
-router.put("/:username/reset_password", restrict, (req, res, next) => {
-  console.log("alright");
-  console.log(req.params.username, req.decoded.username);
-  console.log("user_id", req.decoded.subject, typeof req.decoded.subject);
-
+router.put("/reset_password/:username", restrict, (req, res, next) => {
   if (req.params.username === req.decoded.username) {
     const rounds = process.env.BCRYPT_ROUNDS || 8;
     const hash = bcrypt.hashSync(req.body.password, rounds);
     Users.updateUserPassword(req.decoded.subject, hash)
-      .then(() => {
-        console.log("mmk");
-        res.status(202).json({ message: "password updated successfully" });
+      .then((user) => {
+        res.status(202).json({ message: "password reset successful", user });
       })
       .catch(next);
   } else {
@@ -68,8 +60,14 @@ router.post("/login", validateCredens, (req, res, next) => {
   }
 });
 
-router.delete("/delete", restrict, (req, res, next) => {
-  res.json({ message: "hitting delete endpoint" });
+router.delete("/delete/:username", restrict, (req, res, next) => {
+  if (req.params.username === req.decoded.username) {
+    Users.deleteUser(req.decoded.subject)
+      .then(res.status(200).json({ message: `account successfully deleted` }))
+      .catch(next);
+  } else {
+    next({ status: 401, message: "unauthorized" });
+  }
 });
 
 module.exports = router;
