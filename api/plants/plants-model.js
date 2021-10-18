@@ -5,8 +5,12 @@ async function getUsersPlants(id) {
   return plants;
 }
 
-async function addPlant(plant) {
-  const [newPlant] = await db("plants").insert(plant, ["id", "nickname", "species", "h2oFrequency", "img_URL"]);
+async function addPlant(user_id, plant) {
+  const plantWithId = {
+    ...plant,
+    owner: user_id
+  };
+  const [newPlant] = await db("plants").insert(plantWithId, ["id", "nickname", "species", "h2oFrequency", "img_URL"]);
   return newPlant;
 }
 
