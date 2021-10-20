@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 
-const { validateCredens, uniqueUsername } = require("./users-middleware");
+const { validateLogin, uniqueUsername, validateRegister } = require("./users-middleware");
 const { restrict } = require("../auth/auth-middleware");
 
 const Users = require("../users/users-model");
@@ -17,7 +17,7 @@ router.get("/", async (req, res, next) => {
 });
 /////////////////////////////////////////
 
-router.post("/register", uniqueUsername, (req, res, next) => {
+router.post("/register", uniqueUsername, validateRegister, (req, res, next) => {
   let user = req.body;
 
   const rounds = process.env.BCRYPT_ROUNDS || 8;
@@ -46,7 +46,7 @@ router.put("/update-account/:username", restrict, (req, res, next) => {
   }
 });
 
-router.post("/login", validateCredens, (req, res, next) => {
+router.post("/login", validateLogin, (req, res, next) => {
   let { password, user } = req.body;
 
   if (user && bcrypt.compareSync(password, user.password)) {

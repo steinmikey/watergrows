@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const Plants = require("./plants-model");
+const { checkPlantOwner, validatePlant } = require("./plants-middleware");
 
 router.get("/", (req, res, next) => {
   const id = req.decoded.subject;
@@ -10,10 +11,9 @@ router.get("/", (req, res, next) => {
     .catch(next);
 });
 
-//add middleware for req.body contents
-router.post("/", (req, res, next) => {
-  const id = req.decoded.subject;
-  Plants.addPlant(id, req.body)
+router.post("/", validatePlant, (req, res, next) => {
+  const user_id = req.decoded.subject;
+  Plants.addPlant(user_id, req.body)
     .then((plant) => {
       res.status(201).json(plant);
     })
@@ -33,21 +33,31 @@ router.get("/:id", (req, res, next) => {
     .catch(next);
 });
 
-router.put("/:id", async (req, res, next) => {
+router.put("/:id", checkPlantOwner, async (req, res, next) => {
   const id = req.params.id;
-  const plant = await Plants.getPlantById(id);
-  if (!plant) {
-    next({ status: 404, message: "plant not found" });
-  } else if (plant.owner === req.decoded.subject) {
-    Plants.updatePlant(id, req.body)
-      .then((plant) => {
-        res.json(plant);
-      })
-      .catch(next);
-  } else {
-    next({ status: 401, message: "unauthorized, you cannot update another user's plant" });
-  }
+
+  Plants.updatePlant(id, req.body)
+    .then((plant) => {
+      res.json(plant);
+    })
+    .catch(next);
 });
+
+// router.put("/:id", checkPlantOwner, async (req, res, next) => {
+//   const id = req.params.id;
+//   const plant = await Plants.getPlantById(id);
+//   if (!plant) {
+//     next({ status: 404, message: "plant not found" });
+//   } else if (plant.owner === req.decoded.subject) {
+//     Plants.updatePlant(id, req.body)
+//       .then((plant) => {
+//         res.json(plant);
+//       })
+//       .catch(next);
+//   } else {
+//     next({ status: 401, message: "unauthorized, you cannot update another user's plant" });
+//   }
+// });
 
 router.delete("/:id", async (req, res, next) => {
   const id = req.params.id;
