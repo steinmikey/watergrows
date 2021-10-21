@@ -16,7 +16,7 @@ function hashUser(username, password, phone) {
 exports.seed = async function (knex, Promise) {
   return await knex("users").insert([
     hashUser("lambda", "school", "123 456-7890"),
-    hashUser("build", "week"),
+    hashUser("buildweek", "123456"),
     hashUser("misha", "daladno")
   ]);
 };
