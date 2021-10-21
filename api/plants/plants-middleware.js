@@ -21,14 +21,13 @@ async function validatePlant(req, res, next) {
     nickname: Joi.string().max(30).required(),
     species: Joi.string().max(200).required(),
     h2oFrequency: Joi.string().max(200).required(),
-    img_URL: Joi.string()
+    img_URL: Joi.string().allow("")
   });
   try {
     const validated = await schema.validateAsync(update);
     req.body = validated;
     next();
   } catch (err) {
-    console.log(err);
     next({ status: 422, message: err.message });
   }
 }
