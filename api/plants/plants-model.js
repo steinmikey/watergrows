@@ -21,7 +21,6 @@ async function addPlant(user_id, plant) {
     owner: user_id
   };
   const [newPlant] = await db("plants").insert(plantWithId, ["id", "nickname", "species", "h2oFrequency", "img_URL"]);
-  console.log("newPlant", typeof newPlant, newPlant);
   return newPlant;
 }
 

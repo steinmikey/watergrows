@@ -17,8 +17,8 @@ async function createUser(user) {
   return newUser;
 }
 
-function updateUserPassword(user_id, hash) {
-  return db("users").where("id", user_id).update({ password: hash }, ["id", "username", "password", "phone"]);
+function updateUserAccount(user_id, changes) {
+  return db("users").where("id", user_id).update(changes, ["id", "username", "password", "phone"]);
 }
 
 function deleteUser(id) {
@@ -30,6 +30,6 @@ module.exports = {
   findBy,
   findById,
   createUser,
-  updateUserPassword,
+  updateUserAccount,
   deleteUser
 };

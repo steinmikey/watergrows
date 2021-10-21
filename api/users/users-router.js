@@ -33,14 +33,25 @@ router.post("/register", uniqueUsername, validateRegister, (req, res, next) => {
 });
 
 router.put("/update-account/:username", restrict, (req, res, next) => {
+  const { password, phone } = req.body;
+  const changes = {};
   if (req.params.username === req.decoded.username) {
-    const rounds = process.env.BCRYPT_ROUNDS || 8;
-    const hash = bcrypt.hashSync(req.body.password, rounds);
-    Users.updateUserPassword(req.decoded.subject, hash)
+    if (password) {
+      const rounds = process.env.BCRYPT_ROUNDS || 8;
+      const hash = bcrypt.hashSync(password, rounds);
+      changes.password = hash;
+    }
+    if (phone) {
+      changes.phone = phone;
+    }
+
+    Users.updateUserAccount(req.decoded.subject, changes)
       .then((user) => {
         res.status(202).json({ message: "update successful", user });
       })
-      .catch(next);
+      .catch((err) => {
+        console.log(err);
+      });
   } else {
     next({ status: 401, message: "unauthorized" });
   }
